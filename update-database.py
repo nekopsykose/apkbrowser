@@ -330,7 +330,9 @@ def add_packages(db, branch, repo, arch, packages, changed):
             cur.execute(sql, [name, ver, operator, pid])
 
         url = config.get("repository", "url")
-        apk_url = f'{url}/{branch}/{repo}/{arch}/{package["name"]}-{package["version"]}.apk'
+        apk_url = (
+            f'{url}/{branch}/{repo}/{arch}/{package["name"]}-{package["version"]}.apk'
+        )
         files = get_file_list(apk_url)
         filerows = []
         for file in files:
@@ -442,6 +444,8 @@ def generate(branch, archs):
         timeout=5.0,
     )
 
+    set_options(db)
+
     cur = db.cursor()
     retries = 0
     while retries < 5:
@@ -455,7 +459,6 @@ def generate(branch, archs):
             time.sleep(1)
             retries += 1
 
-    set_options(db)
     create_tables(db)
 
     repos = config.get("repository", "repos").split(",")
